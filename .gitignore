@@ -46,3 +46,11 @@ tmp/
 *.bak
 *.backup
 *~
+
+# Python Backend
+backend/__pycache__/
+backend/**/__pycache__/
+backend/instance/
+*.pyc
+*.pyo
+backend/.env
