@@ -1,6 +1,13 @@
 # Shamrock Day Spa Website
 
-A modern, responsive spa website inspired by Cloud9 Spa's design aesthetic. This website features a clean, professional layout perfect for day spas, wellness centers, and massage therapy businesses.
+A complete, modern spa website with **full-stack functionality** inspired by Cloud9 Spa's design aesthetic. This website features a clean, professional layout with a Python Flask backend for appointment booking, scheduling, and customer management.
+
+## 🎯 Complete Solution
+
+This is a **production-ready** spa website with both frontend and backend:
+- **Frontend**: Modern, responsive HTML/CSS/JavaScript
+- **Backend**: Python Flask REST API with database
+- **Features**: Appointment booking, scheduling, newsletter, contact forms
 
 ## 🌟 Features
 
@@ -26,41 +33,76 @@ The design follows Cloud9 Spa's aesthetic with:
 
 ```
 shamrock-spa-website/
-├── index.html          # Main HTML file
+├── index.html              # Main HTML file
 ├── css/
-│   └── styles.css      # All styling
+│   └── styles.css         # All styling + modal
 ├── js/
-│   └── script.js       # JavaScript functionality
-├── images/             # Image assets (add your images here)
-└── README.md           # This file
+│   └── script.js          # Frontend + API integration
+├── images/                # Image assets
+├── backend/               # Python Flask Backend
+│   ├── app.py            # Main Flask application
+│   ├── requirements.txt  # Python dependencies
+│   ├── .env.example      # Environment variables template
+│   ├── models/
+│   │   └── models.py     # Database models
+│   ├── routes/
+│   │   ├── appointments.py   # Booking endpoints
+│   │   ├── newsletter.py     # Newsletter endpoints
+│   │   ├── contact.py        # Contact form endpoints
+│   │   └── admin.py          # Admin dashboard
+│   └── utils/
+│       └── email_service.py  # Email notifications
+├── README.md              # This file
+└── DOWNLOAD_GUIDE.md     # Download/deployment guide
 ```
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### Option 1: Open Directly
-Simply open `index.html` in your web browser to view the website locally.
+### Step 1: Install Python Dependencies
 
-### Option 2: Use a Local Server
-For better development experience, use a local server:
-
-**Using Python:**
 ```bash
-# Python 3
+cd backend
+pip install -r requirements.txt
+```
+
+### Step 2: Start the Backend Server
+
+```bash
+python app.py
+```
+
+The backend will start on `http://localhost:5001`
+
+### Step 3: Access the Website
+
+Open your browser and go to:
+```
+http://localhost:5001
+```
+
+That's it! The website is now fully functional with:
+✅ Live appointment booking
+✅ Real-time availability checking
+✅ Newsletter subscriptions
+✅ Contact form
+✅ Database storage
+
+## 📖 Detailed Setup
+
+### Frontend Only (No Backend)
+If you just want to view the design without booking functionality:
+
+```bash
+# Open index.html in your browser
+open index.html
+
+# Or use Python's simple server
 python -m http.server 8000
-
-# Then visit: http://localhost:8000
+# Visit: http://localhost:8000
 ```
 
-**Using Node.js (with http-server):**
-```bash
-npm install -g http-server
-http-server
-
-# Then visit: http://localhost:8080
-```
-
-**Using VS Code:**
-Install the "Live Server" extension and click "Go Live" in the status bar.
+### Backend + Frontend (Full Functionality)
+Follow the Quick Start steps above.
 
 ## ✏️ Customization Guide
 
