@@ -10,7 +10,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.models import db, Appointment, Customer, Service
-from utils.email_service import send_appointment_confirmation
+from utils.email_service import send_appointment_confirmation, send_admin_booking_notification
 
 appointments_bp = Blueprint('appointments', __name__)
 
@@ -77,11 +77,17 @@ def create_appointment():
         db.session.add(appointment)
         db.session.commit()
 
-        # Send confirmation email
+        # Send confirmation email to customer
         try:
             send_appointment_confirmation(customer, appointment, service)
         except Exception as e:
-            print(f"Warning: Could not send confirmation email: {e}")
+            print(f"Warning: Could not send confirmation email to customer: {e}")
+
+        # Send notification email to admin/owner
+        try:
+            send_admin_booking_notification(customer, appointment, service)
+        except Exception as e:
+            print(f"Warning: Could not send notification email to admin: {e}")
 
         return jsonify({
             'message': 'Appointment booked successfully!',

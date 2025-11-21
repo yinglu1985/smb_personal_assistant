@@ -14,9 +14,9 @@ SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
 SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 SMTP_USERNAME = os.environ.get('SMTP_USERNAME', '')
 SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
-FROM_EMAIL = os.environ.get('FROM_EMAIL', 'noreply@shamrockspa.com')
+FROM_EMAIL = os.environ.get('FROM_EMAIL', 'noreply@shamrockdayspa.com')
 FROM_NAME = os.environ.get('FROM_NAME', 'Shamrock Day Spa')
-ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@shamrockspa.com')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'info@shamrockdayspa.com')
 
 
 def send_email(to_email, subject, html_content, text_content=None):
@@ -279,6 +279,83 @@ def send_contact_notification(contact_message):
     return send_email(ADMIN_EMAIL, subject, html_content, text_content)
 
 
+def send_admin_booking_notification(customer, appointment, service):
+    """Send notification to admin/owner about new booking"""
+
+    appointment_datetime = datetime.combine(
+        appointment.appointment_date,
+        appointment.appointment_time
+    )
+
+    subject = f"New Booking: {customer.first_name} {customer.last_name} - {service.name}"
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #1B5971; color: white; padding: 20px; }}
+            .content {{ padding: 20px; background: #f9f9f9; }}
+            .booking-box {{ background: #FFF9E6; padding: 15px; margin: 20px 0; border-left: 4px solid #FBBD48; }}
+            .customer-info {{ background: white; padding: 15px; margin: 20px 0; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>🎉 New Appointment Booked!</h2>
+            </div>
+            <div class="content">
+                <div class="booking-box">
+                    <h3>Appointment Details:</h3>
+                    <p><strong>Service:</strong> {service.name}</p>
+                    <p><strong>Duration:</strong> {service.duration_minutes} minutes</p>
+                    <p><strong>Price:</strong> ${service.price:.2f}</p>
+                    <p><strong>Date:</strong> {appointment_datetime.strftime('%A, %B %d, %Y')}</p>
+                    <p><strong>Time:</strong> {appointment_datetime.strftime('%I:%M %p')}</p>
+                    {f'<p><strong>Notes:</strong> {appointment.notes}</p>' if appointment.notes else ''}
+                </div>
+
+                <div class="customer-info">
+                    <h3>Customer Information:</h3>
+                    <p><strong>Name:</strong> {customer.first_name} {customer.last_name}</p>
+                    <p><strong>Email:</strong> {customer.email}</p>
+                    <p><strong>Phone:</strong> {customer.phone}</p>
+                </div>
+
+                <p><strong>Status:</strong> {appointment.status.upper()}</p>
+                <p><strong>Booked at:</strong> {appointment.created_at.strftime('%B %d, %Y at %I:%M %p')}</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    text_content = f"""
+    New Appointment Booked!
+
+    Appointment Details:
+    Service: {service.name}
+    Duration: {service.duration_minutes} minutes
+    Price: ${service.price:.2f}
+    Date: {appointment_datetime.strftime('%A, %B %d, %Y')}
+    Time: {appointment_datetime.strftime('%I:%M %p')}
+    {f'Notes: {appointment.notes}' if appointment.notes else ''}
+
+    Customer Information:
+    Name: {customer.first_name} {customer.last_name}
+    Email: {customer.email}
+    Phone: {customer.phone}
+
+    Status: {appointment.status.upper()}
+    Booked at: {appointment.created_at.strftime('%B %d, %Y at %I:%M %p')}
+    """
+
+    return send_email(ADMIN_EMAIL, subject, html_content, text_content)
+
+
 def send_appointment_reminder(customer, appointment, service):
     """Send appointment reminder email (24 hours before)"""
 
@@ -319,7 +396,7 @@ def send_appointment_reminder(customer, appointment, service):
                 <p>We look forward to seeing you tomorrow!</p>
                 <p>Please arrive 10 minutes early.</p>
 
-                <p>If you need to reschedule, please call us at (555) 123-4567.</p>
+                <p>If you need to reschedule, please call us at (650) 343-7888.</p>
             </div>
         </div>
     </body>
