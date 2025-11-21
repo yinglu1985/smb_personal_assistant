@@ -124,15 +124,23 @@ def init_db():
         # Add default services if none exist
         if Service.query.count() == 0:
             default_services = [
-                Service(name='Swedish Massage', description='Relaxing full-body massage', duration_minutes=60, price=75.00, category='massage'),
-                Service(name='Deep Tissue Massage', description='Therapeutic deep pressure massage', duration_minutes=60, price=85.00, category='massage'),
-                Service(name='Hot Stone Massage', description='Massage with heated stones', duration_minutes=90, price=120.00, category='massage'),
-                Service(name='Classic Facial', description='Cleansing and rejuvenating facial', duration_minutes=60, price=65.00, category='facial'),
-                Service(name='Anti-Aging Facial', description='Advanced anti-aging treatment', duration_minutes=75, price=95.00, category='facial'),
-                Service(name='Body Scrub', description='Exfoliating body treatment', duration_minutes=45, price=80.00, category='body'),
-                Service(name='Manicure', description='Professional nail care', duration_minutes=45, price=35.00, category='nails'),
-                Service(name='Pedicure', description='Foot spa and nail care', duration_minutes=60, price=45.00, category='nails'),
-                Service(name='Deluxe Spa Package', description='Full day spa experience', duration_minutes=180, price=250.00, category='package'),
+                # Massage Services
+                Service(name='Swedish Massage (30 min)', description='Relaxing full-body Swedish massage', duration_minutes=30, price=50.00, category='massage'),
+                Service(name='Swedish Massage (60 min)', description='Relaxing full-body Swedish massage', duration_minutes=60, price=70.00, category='massage'),
+                Service(name='Swedish Massage (90 min)', description='Relaxing full-body Swedish massage', duration_minutes=90, price=100.00, category='massage'),
+                Service(name='Deep Tissue Massage (30 min)', description='Therapeutic deep pressure massage', duration_minutes=30, price=55.00, category='massage'),
+                Service(name='Deep Tissue Massage (60 min)', description='Therapeutic deep pressure massage', duration_minutes=60, price=75.00, category='massage'),
+                Service(name='Deep Tissue Massage (90 min)', description='Therapeutic deep pressure massage', duration_minutes=90, price=105.00, category='massage'),
+                Service(name='Hot Stone Massage (60 min)', description='Massage with heated stones', duration_minutes=60, price=80.00, category='massage'),
+                Service(name='Hot Stone Massage (90 min)', description='Massage with heated stones', duration_minutes=90, price=110.00, category='massage'),
+                Service(name='Body Scrub Massage (60 min)', description='Exfoliating body scrub with massage', duration_minutes=60, price=80.00, category='massage'),
+                Service(name='Body Scrub Massage (90 min)', description='Exfoliating body scrub with massage', duration_minutes=90, price=100.00, category='massage'),
+                # Facial Services
+                Service(name='Mini Facial', description='Quick refreshing facial treatment', duration_minutes=30, price=40.00, category='facial'),
+                Service(name='Basic Facial', description='Classic cleansing and rejuvenating facial', duration_minutes=60, price=80.00, category='facial'),
+                Service(name='Deluxe Facial', description='Comprehensive luxury facial treatment', duration_minutes=90, price=120.00, category='facial'),
+                # Special Packages
+                Service(name='Special Combo (Mini Facial + Swedish 60min)', description='Mini facial combined with 60-minute Swedish massage', duration_minutes=90, price=89.00, category='package'),
             ]
 
             for service in default_services:

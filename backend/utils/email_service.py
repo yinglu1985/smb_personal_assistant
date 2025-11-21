@@ -118,9 +118,9 @@ def send_appointment_confirmation(customer, appointment, service):
                 </ul>
 
                 <p><strong>Location:</strong><br>
-                123 Wellness Avenue, Suite 100<br>
-                Your City, ST 12345<br>
-                Phone: (555) 123-4567</p>
+                267 Baldwin Ave<br>
+                San Mateo, CA 94401<br>
+                Phone: (650) 343-7888</p>
 
                 <p>If you need to reschedule or cancel, please contact us at least 24 hours in advance.</p>
 
@@ -128,7 +128,7 @@ def send_appointment_confirmation(customer, appointment, service):
             </div>
             <div class="footer">
                 <p>&copy; 2024 Shamrock Day Spa. All rights reserved.</p>
-                <p>123 Wellness Avenue, Suite 100 | (555) 123-4567 | info@shamrockspa.com</p>
+                <p>267 Baldwin Ave, San Mateo, CA 94401 | (650) 343-7888 | info@shamrockdayspa.com</p>
             </div>
         </div>
     </body>
@@ -150,9 +150,9 @@ def send_appointment_confirmation(customer, appointment, service):
     Price: ${service.price:.2f}
 
     Location:
-    123 Wellness Avenue, Suite 100
-    Your City, ST 12345
-    Phone: (555) 123-4567
+    267 Baldwin Ave
+    San Mateo, CA 94401
+    Phone: (650) 343-7888
 
     Please arrive 10 minutes early.
 
