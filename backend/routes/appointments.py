@@ -100,30 +100,38 @@ def create_appointment():
         db.session.add(appointment)
         db.session.commit()
 
+        # Get the response data before starting background thread
+        response_data = {
+            'message': 'Appointment booked successfully!',
+            'appointment': appointment.to_dict()
+        }
+
         # Send emails asynchronously in background to avoid blocking the response
-        # Need to copy Flask app context for background thread
+        # Pass only IDs to background thread (not DB objects)
         app = current_app._get_current_object()
+        customer_id = customer.id
+        appointment_id = appointment.id
+        service_id = service.id
 
         def send_emails_async():
             with app.app_context():
                 try:
-                    send_appointment_confirmation(customer, appointment, service)
-                except Exception as e:
-                    print(f"Warning: Could not send confirmation email to customer: {e}")
+                    # Query objects fresh in this thread
+                    customer_obj = Customer.query.get(customer_id)
+                    appointment_obj = Appointment.query.get(appointment_id)
+                    service_obj = Service.query.get(service_id)
 
-                try:
-                    send_admin_booking_notification(customer, appointment, service)
+                    if customer_obj and appointment_obj and service_obj:
+                        send_appointment_confirmation(customer_obj, appointment_obj, service_obj)
+                        send_admin_booking_notification(customer_obj, appointment_obj, service_obj)
                 except Exception as e:
-                    print(f"Warning: Could not send notification email to admin: {e}")
+                    print(f"Warning: Could not send emails: {e}")
 
         # Start email sending in background thread
         email_thread = threading.Thread(target=send_emails_async, daemon=True)
         email_thread.start()
 
-        return jsonify({
-            'message': 'Appointment booked successfully!',
-            'appointment': appointment.to_dict()
-        }), 201
+        return jsonify(response_data), 201
 
     except ValueError as e:
         return jsonify({'error': f'Invalid date/time format: {str(e)}'}), 400
