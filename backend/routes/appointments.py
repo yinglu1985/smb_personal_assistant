@@ -2,7 +2,7 @@
 Appointment Booking API Routes
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime, timedelta
 import sys
 import os
@@ -101,16 +101,20 @@ def create_appointment():
         db.session.commit()
 
         # Send emails asynchronously in background to avoid blocking the response
-        def send_emails_async():
-            try:
-                send_appointment_confirmation(customer, appointment, service)
-            except Exception as e:
-                print(f"Warning: Could not send confirmation email to customer: {e}")
+        # Need to copy Flask app context for background thread
+        app = current_app._get_current_object()
 
-            try:
-                send_admin_booking_notification(customer, appointment, service)
-            except Exception as e:
-                print(f"Warning: Could not send notification email to admin: {e}")
+        def send_emails_async():
+            with app.app_context():
+                try:
+                    send_appointment_confirmation(customer, appointment, service)
+                except Exception as e:
+                    print(f"Warning: Could not send confirmation email to customer: {e}")
+
+                try:
+                    send_admin_booking_notification(customer, appointment, service)
+                except Exception as e:
+                    print(f"Warning: Could not send notification email to admin: {e}")
 
         # Start email sending in background thread
         email_thread = threading.Thread(target=send_emails_async, daemon=True)
