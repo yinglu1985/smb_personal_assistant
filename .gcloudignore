@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Database (use Cloud SQL in production)
+*.db
+*.sqlite
+*.sqlite3
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+DOWNLOAD_GUIDE.md
+EMAIL_SETUP.md
+
+# Scripts
+extract_shamrock_info.py
+shamrock_data.json
+
+# Logs
+*.log
+
+# Test data
+backend/spa.db

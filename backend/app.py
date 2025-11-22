@@ -18,7 +18,15 @@ app = Flask(__name__,
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spa.db'
+
+# Database configuration - use /tmp for App Engine (ephemeral but works for demo)
+# For production, use Cloud SQL instead
+db_path = os.environ.get('DATABASE_PATH', 'spa.db')
+if os.environ.get('GAE_ENV', '').startswith('standard'):
+    # Running on App Engine
+    db_path = '/tmp/spa.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Enable CORS for frontend communication
