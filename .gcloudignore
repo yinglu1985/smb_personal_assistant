@@ -31,6 +31,8 @@ Thumbs.db
 README.md
 DOWNLOAD_GUIDE.md
 EMAIL_SETUP.md
+EMAIL_SETUP_INSTRUCTIONS.md
+DEPLOYMENT_GUIDE.md
 
 # Scripts
 extract_shamrock_info.py

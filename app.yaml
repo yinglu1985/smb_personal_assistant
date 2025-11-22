@@ -3,7 +3,14 @@ runtime: python312
 # Environment variables
 env_variables:
   FLASK_ENV: 'production'
-  SECRET_KEY: 'production-secret-key-change-immediately'
+  SECRET_KEY: 'b8d9ee9301389d26f9d3c22afac53a9c2648ce219972d2503f6e7fe7ecd25db5'
+  # Email Configuration - Gmail SMTP
+  SMTP_HOST: 'smtp.gmail.com'
+  SMTP_PORT: '587'
+  SMTP_USERNAME: 'yinglu08fall@gmail.com'
+  SMTP_PASSWORD: 'GMAIL_APP_PASSWORD_NEEDED_HERE'
+  FROM_EMAIL: 'yinglu08fall@gmail.com'
+  ADMIN_EMAIL: 'yinglu1985.shanghai@gmail.com'
   
 # Handlers
 handlers:

@@ -249,7 +249,10 @@ function updateAppointmentsList() {
         row.style.cursor = 'pointer';
         row.onclick = () => showAppointmentDetails(apt);
 
-        const date = new Date(apt.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        // Parse date string to avoid timezone issues (date comes as "YYYY-MM-DD")
+        const [year, month, day] = apt.appointment_date.split('-');
+        const dateObj = new Date(year, month - 1, day); // month is 0-indexed
+        const date = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const time = formatTime(apt.appointment_time);
         const customer = apt.customer ? `${apt.customer.first_name} ${apt.customer.last_name}` : 'Unknown';
         const service = apt.service ? apt.service.name : 'N/A';
@@ -286,7 +289,10 @@ function showAppointmentDetails(appointmentId) {
     const modal = document.getElementById('appointment-modal');
     const details = document.getElementById('appointment-details');
 
-    const date = new Date(appointment.appointment_date).toLocaleDateString('en-US', {
+    // Parse date string to avoid timezone issues (date comes as "YYYY-MM-DD")
+    const [year, month, day] = appointment.appointment_date.split('-');
+    const dateObj = new Date(year, month - 1, day); // month is 0-indexed
+    const date = dateObj.toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
