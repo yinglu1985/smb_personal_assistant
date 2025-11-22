@@ -16,7 +16,7 @@ SMTP_USERNAME = os.environ.get('SMTP_USERNAME', '')
 SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
 FROM_EMAIL = os.environ.get('FROM_EMAIL', 'noreply@shamrockdayspa.com')
 FROM_NAME = os.environ.get('FROM_NAME', 'Shamrock Day Spa')
-ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'yinglu1985.shanghai@gmail.com')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'yinglu08fall@gmail.com')
 
 
 def send_email(to_email, subject, html_content, text_content=None):
