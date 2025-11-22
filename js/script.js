@@ -2,7 +2,8 @@
 // Configuration
 // ========================================
 
-const API_BASE_URL = 'http://localhost:5001/api';
+// Use relative URLs to work in both development and production
+const API_BASE_URL = '/api';
 
 // ========================================
 // Mobile Menu Toggle

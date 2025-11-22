@@ -8,7 +8,7 @@ env_variables:
   SMTP_HOST: 'smtp.gmail.com'
   SMTP_PORT: '587'
   SMTP_USERNAME: 'yinglu08fall@gmail.com'
-  SMTP_PASSWORD: 'GMAIL_APP_PASSWORD_NEEDED_HERE'
+  SMTP_PASSWORD: 'bdtfwnjvrqdlnajf'
   FROM_EMAIL: 'yinglu08fall@gmail.com'
   ADMIN_EMAIL: 'yinglu1985.shanghai@gmail.com'
   
