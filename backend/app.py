@@ -29,7 +29,7 @@ scheduler = BackgroundScheduler()
 scheduler.start()
 
 # Import db from models
-from models.models import db, Customer, Appointment, NewsletterSubscriber, Service, ContactMessage
+from models.models import db, Customer, Appointment, NewsletterSubscriber, Service, ContactMessage, Therapist
 
 # Initialize database with app
 db.init_app(app)
@@ -67,6 +67,12 @@ def get_services():
         'duration': s.duration_minutes,
         'price': s.price
     } for s in services])
+
+# Get available therapists
+@app.route('/api/therapists', methods=['GET'])
+def get_therapists():
+    therapists = Therapist.query.filter_by(active=True).all()
+    return jsonify([t.to_dict() for t in therapists])
 
 # Get available time slots for a specific date
 @app.route('/api/appointments/available-slots', methods=['GET'])
@@ -148,6 +154,20 @@ def init_db():
 
             db.session.commit()
             print("✓ Default services added to database")
+
+        # Add default therapists if none exist
+        if Therapist.query.count() == 0:
+            default_therapists = [
+                Therapist(name='Lily', specialty='Swedish & Deep Tissue Massage', bio='Certified massage therapist with 8+ years experience specializing in relaxation and therapeutic techniques.'),
+                Therapist(name='Wendy', specialty='Hot Stone & Body Treatments', bio='Expert in hot stone therapy and body scrubs. Known for her gentle, healing touch.'),
+                Therapist(name='Elaine', specialty='All Massage Types', bio='Versatile therapist skilled in all massage modalities. Great for first-time spa guests.'),
+            ]
+
+            for therapist in default_therapists:
+                db.session.add(therapist)
+
+            db.session.commit()
+            print("✓ Default therapists added to database")
 
 # Error handlers
 @app.errorhandler(404)

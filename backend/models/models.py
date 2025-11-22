@@ -42,6 +42,33 @@ class Customer(db.Model):
         }
 
 
+class Therapist(db.Model):
+    """Massage therapists/staff"""
+    __tablename__ = 'therapists'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    specialty = db.Column(db.String(200))
+    bio = db.Column(db.Text)
+    active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    appointments = db.relationship('Appointment', backref='therapist', lazy=True)
+
+    def __repr__(self):
+        return f'<Therapist {self.name}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'specialty': self.specialty,
+            'bio': self.bio,
+            'active': self.active
+        }
+
+
 class Service(db.Model):
     """Spa services offered"""
     __tablename__ = 'services'
@@ -80,6 +107,7 @@ class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'), nullable=False)
+    therapist_id = db.Column(db.Integer, db.ForeignKey('therapists.id'), nullable=True)
     appointment_date = db.Column(db.Date, nullable=False, index=True)
     appointment_time = db.Column(db.Time, nullable=False)
     status = db.Column(db.String(20), default='pending')  # pending, confirmed, completed, cancelled, no-show
@@ -96,6 +124,7 @@ class Appointment(db.Model):
             'id': self.id,
             'customer': self.customer.to_dict() if self.customer else None,
             'service': self.service.to_dict() if self.service else None,
+            'therapist': self.therapist.to_dict() if self.therapist else None,
             'appointment_date': self.appointment_date.isoformat(),
             'appointment_time': self.appointment_time.strftime('%H:%M'),
             'status': self.status,

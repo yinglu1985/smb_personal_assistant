@@ -169,6 +169,7 @@ function openBookingModal() {
     bookingModal.classList.add('active');
     document.body.style.overflow = 'hidden';
     loadServices();
+    loadTherapists();
 }
 
 function closeBookingModal() {
@@ -209,6 +210,28 @@ async function loadServices() {
     } catch (error) {
         console.error('Failed to load services:', error);
         serviceSelect.innerHTML = '<option value="">Failed to load services</option>';
+    }
+}
+
+// Load therapists from API
+async function loadTherapists() {
+    const therapistSelect = document.getElementById('therapist_id');
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/therapists`);
+        const therapists = await response.json();
+
+        therapistSelect.innerHTML = '<option value="">No preference</option>';
+        therapists.forEach(therapist => {
+            const option = document.createElement('option');
+            option.value = therapist.id;
+            option.textContent = `${therapist.name} - ${therapist.specialty}`;
+            option.title = therapist.bio;  // Show bio on hover
+            therapistSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Failed to load therapists:', error);
+        therapistSelect.innerHTML = '<option value="">Failed to load therapists</option>';
     }
 }
 
@@ -270,6 +293,7 @@ if (bookingForm) {
         e.preventDefault();
 
         const formData = new FormData(bookingForm);
+        const therapist_id = formData.get('therapist_id');
         const data = {
             first_name: formData.get('first_name'),
             last_name: formData.get('last_name'),
@@ -280,6 +304,11 @@ if (bookingForm) {
             time: formData.get('time'),
             notes: formData.get('notes') || ''
         };
+
+        // Add therapist_id only if selected
+        if (therapist_id) {
+            data.therapist_id = parseInt(therapist_id);
+        }
 
         showBookingMessage('Booking your appointment...', 'loading');
 

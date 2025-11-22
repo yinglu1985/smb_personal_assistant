@@ -9,7 +9,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from models.models import db, Appointment, Customer, Service
+from models.models import db, Appointment, Customer, Service, Therapist
 from utils.email_service import send_appointment_confirmation, send_admin_booking_notification
 
 appointments_bp = Blueprint('appointments', __name__)
@@ -41,15 +41,36 @@ def create_appointment():
         if not service or not service.active:
             return jsonify({'error': 'Invalid service selected'}), 400
 
-        # Check if time slot is available
-        existing_appointment = Appointment.query.filter(
-            Appointment.appointment_date == appointment_date,
-            Appointment.appointment_time == appointment_time,
-            Appointment.status.in_(['confirmed', 'pending'])
-        ).first()
+        # Validate therapist if provided
+        therapist_id = data.get('therapist_id')
+        therapist = None
+        if therapist_id:
+            therapist = Therapist.query.get(therapist_id)
+            if not therapist or not therapist.active:
+                return jsonify({'error': 'Invalid therapist selected'}), 400
 
-        if existing_appointment:
-            return jsonify({'error': 'This time slot is no longer available'}), 409
+        # Check if time slot is available
+        # If therapist is selected, check their availability specifically
+        # Otherwise, check general availability
+        if therapist_id:
+            existing_appointment = Appointment.query.filter(
+                Appointment.therapist_id == therapist_id,
+                Appointment.appointment_date == appointment_date,
+                Appointment.appointment_time == appointment_time,
+                Appointment.status.in_(['confirmed', 'pending'])
+            ).first()
+
+            if existing_appointment:
+                return jsonify({'error': f'{therapist.name} is not available at this time'}), 409
+        else:
+            existing_appointment = Appointment.query.filter(
+                Appointment.appointment_date == appointment_date,
+                Appointment.appointment_time == appointment_time,
+                Appointment.status.in_(['confirmed', 'pending'])
+            ).first()
+
+            if existing_appointment:
+                return jsonify({'error': 'This time slot is no longer available'}), 409
 
         # Find or create customer
         customer = Customer.query.filter_by(email=data['email'].lower()).first()
@@ -68,6 +89,7 @@ def create_appointment():
         appointment = Appointment(
             customer_id=customer.id,
             service_id=service.id,
+            therapist_id=therapist_id,
             appointment_date=appointment_date,
             appointment_time=appointment_time,
             status='pending',

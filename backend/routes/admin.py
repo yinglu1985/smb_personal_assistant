@@ -9,7 +9,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from models.models import db, Appointment, Customer, Service, NewsletterSubscriber, ContactMessage
+from models.models import db, Appointment, Customer, Service, NewsletterSubscriber, ContactMessage, Therapist
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -73,6 +73,7 @@ def get_all_appointments():
     date_from = request.args.get('date_from')
     date_to = request.args.get('date_to')
     status = request.args.get('status')
+    therapist_id = request.args.get('therapist_id')
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 50, type=int)
 
@@ -95,6 +96,9 @@ def get_all_appointments():
 
     if status:
         query = query.filter(Appointment.status == status)
+
+    if therapist_id:
+        query = query.filter(Appointment.therapist_id == therapist_id)
 
     # Order and paginate
     query = query.order_by(
