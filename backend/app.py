@@ -133,8 +133,8 @@ def get_available_slots():
 # Initialize database with default services
 def init_db():
     with app.app_context():
-        # Use checkfirst to avoid errors when tables already exist
-        db.create_all(checkfirst=True)
+        # Create all tables
+        db.create_all()
 
         # Add default services if none exist
         if Service.query.count() == 0:

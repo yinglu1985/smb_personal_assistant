@@ -10,7 +10,7 @@ env_variables:
   SMTP_USERNAME: 'yinglu08fall@gmail.com'
   SMTP_PASSWORD: 'bdtfwnjvrqdlnajf'
   FROM_EMAIL: 'yinglu08fall@gmail.com'
-  ADMIN_EMAIL: 'yinglu1985.shanghai@gmail.com'
+  ADMIN_EMAIL: 'yinglu08fall@gmail.com'
   
 # Handlers
 handlers:
