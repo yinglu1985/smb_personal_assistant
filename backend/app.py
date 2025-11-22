@@ -9,6 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
+import sqlalchemy
+from google.cloud.sql.connector import Connector
 
 # Initialize Flask app
 app = Flask(__name__,
@@ -19,15 +21,42 @@ app = Flask(__name__,
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-# Database configuration - use /tmp for App Engine (ephemeral but works for demo)
-# For production, use Cloud SQL instead
-db_path = os.environ.get('DATABASE_PATH', 'spa.db')
-if os.environ.get('GAE_ENV', '').startswith('standard'):
-    # Running on App Engine
-    db_path = '/tmp/spa.db'
-
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# Database configuration
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize Cloud SQL Connector
+connector = Connector()
+
+def getconn():
+    """Create connection to Cloud SQL using Unix socket"""
+    conn = connector.connect(
+        os.environ.get('CLOUD_SQL_CONNECTION_NAME'),
+        "pg8000",
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASS'),
+        db=os.environ.get('DB_NAME')
+    )
+    return conn
+
+# Configure database URI based on environment
+if os.environ.get('GAE_ENV', '').startswith('standard'):
+    # Running on App Engine - use Cloud SQL with Unix socket
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'creator': getconn
+    }
+else:
+    # Running locally - use Cloud SQL connector or fallback to SQLite
+    if os.environ.get('CLOUD_SQL_CONNECTION_NAME'):
+        # Use Cloud SQL connector for local development
+        app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'creator': getconn
+        }
+    else:
+        # Fallback to SQLite for local development without Cloud SQL
+        db_path = os.environ.get('DATABASE_PATH', 'spa.db')
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 
 # Enable CORS for frontend communication
 CORS(app)
@@ -63,6 +92,41 @@ def index():
 @app.route('/api/health')
 def health():
     return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()})
+
+# Database diagnostics endpoint
+@app.route('/api/db-info')
+def db_info():
+    """Return database connection information for diagnostics"""
+    db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
+
+    # Get database engine info
+    engine_info = {}
+    try:
+        engine = db.engine
+        engine_info = {
+            'dialect': engine.dialect.name,
+            'driver': engine.driver,
+        }
+    except:
+        engine_info = {'error': 'Could not get engine info'}
+
+    # Test a simple query to verify connection
+    try:
+        service_count = Service.query.count()
+        therapist_count = Therapist.query.count()
+        query_test = {'success': True, 'services': service_count, 'therapists': therapist_count}
+    except Exception as e:
+        query_test = {'success': False, 'error': str(e)}
+
+    return jsonify({
+        'database_uri': db_uri.split('@')[0] if '@' in db_uri else db_uri,  # Hide credentials
+        'engine': engine_info,
+        'query_test': query_test,
+        'environment': {
+            'GAE_ENV': os.environ.get('GAE_ENV', 'Not set'),
+            'has_cloud_sql_config': bool(os.environ.get('CLOUD_SQL_CONNECTION_NAME'))
+        }
+    })
 
 # Get available services
 @app.route('/api/services', methods=['GET'])

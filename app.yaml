@@ -4,6 +4,11 @@ runtime: python312
 env_variables:
   FLASK_ENV: 'production'
   SECRET_KEY: 'b8d9ee9301389d26f9d3c22afac53a9c2648ce219972d2503f6e7fe7ecd25db5'
+  # Cloud SQL Configuration
+  CLOUD_SQL_CONNECTION_NAME: 'smb-personal-agent:us-central1:shamrock-spa-db'
+  DB_USER: 'spa_user'
+  DB_PASS: 'ShamrockSpaUser2024!'
+  DB_NAME: 'shamrock_spa'
   # Email Configuration - Gmail SMTP
   SMTP_HOST: 'smtp.gmail.com'
   SMTP_PORT: '587'
@@ -11,6 +16,10 @@ env_variables:
   SMTP_PASSWORD: 'bdtfwnjvrqdlnajf'
   FROM_EMAIL: 'yinglu08fall@gmail.com'
   ADMIN_EMAIL: 'yinglu08fall@gmail.com'
+
+# Cloud SQL connection
+beta_settings:
+  cloud_sql_instances: 'smb-personal-agent:us-central1:shamrock-spa-db'
   
 # Handlers
 handlers:
